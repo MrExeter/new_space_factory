@@ -11,6 +11,8 @@ class WorkCenter(models.Model):
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=256)
     is_available = models.BooleanField(default=True)
+
+    # This is the type of work-center
     production_type = models.CharField(choices=PRODUCTION_TYPE, max_length=16, default='A')
 
     def __str__(self):

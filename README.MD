@@ -1,5 +1,7 @@
 # Space Factory
 
 ###  Python 3.6
-### _install requirements form requirements.txt_
+### _install requirements from requirements.txt_
+
+
 
