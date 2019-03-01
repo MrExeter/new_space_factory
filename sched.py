@@ -71,32 +71,15 @@ class Scheduler:
         return sorted(time_task_list, key=lambda k: k['process_time'], reverse=reverse_it)
 
     @classmethod
-    def simple_scheduler(cls, parts, work_centers):
+    def create_task_duration_histogram(cls, parts, work_centers):
         """
-        Function that will attempt to find an optimal schedule for given production tasks \
-        and available compatible work centers
-
-        Fewer longer tasks first will produce fewer parts per 'clock tick' and as more and \
-        more shorter duration tasks can be added in 'parallel' the number of parts produced \
-        per 'clock tick' will maximize toward the end of the production run.
+        Function that creates a histogram of task durations
 
         :param parts: List of vehicle components to be processed
         :param work_centers: List of work centers for parts processing
-        :return:
+        :return: A sorted dictionary (descending order by key value) and the mapped
+        value contains a list of tasks with that duration
         """
-
-        ###########################################################################
-        #
-        # Dictionary for storing the solution,
-        #
-        # duration -- total steps or periods of time to complete tasks
-        # production_steps -- list of tuples,
-        #
-        schedule_map = {
-            "duration": 0,
-            "production_steps": [],
-            "solved": False
-        }
 
         task_distribution_histogram = {}
 
@@ -122,8 +105,39 @@ class Scheduler:
         task_distribution_histogram = OrderedDict(sorted(task_distribution_histogram.items(),
                                                          reverse=True))
 
-        # Pretty print task_distribution_histogram
-        pprint.pprint(task_distribution_histogram)
+        # # Pretty print task_distribution_histogram
+        # pprint.pprint(task_distribution_histogram)
+
+        return task_distribution_histogram
+
+    @classmethod
+    def scheduler(cls, task_histogram):
+        """
+        Calculates a schedule for a given set of tasks and durations
+        :param task_histogram: histogram of tasks based on duration
+        :return: dictionary with following stucture
+        {
+            duration: total duration time,
+            "production_steps": detail of units produced at each time step,
+            "solved": boolean flag indicates if a solution was reached.
+        }
+        """
+
+        ###########################################################################
+        #
+        # Dictionary for storing the solution,
+        #
+        # duration -- total steps or periods of time to complete tasks
+        # production_steps -- list of tuples,
+        #
+        schedule_map = {
+            "duration": 0,
+            "production_steps": [],
+            "solved": False
+        }
+
+
+
 
         return schedule_map
 
@@ -135,5 +149,7 @@ tasks = Scheduler.create_sorted_tasks(True)
 centers = Scheduler.create_workcenter_list()
 
 # Invoke scheduler, (currently only creates histogram of tasks arranged by duration)
-Scheduler.simple_scheduler(tasks, centers)
+task_histogram = Scheduler.create_task_duration_histogram(tasks, centers)
+
+pprint.pprint(task_histogram)
 
