@@ -1,6 +1,6 @@
 import requests
-import pprint
-from collections import OrderedDict
+from pprint import pprint
+from collections import Counter
 
 API_URL = "http://127.0.0.1:8000/"
 VECHICLE_ORDERS = "vehicle_orders/vehicle_orders/"
@@ -15,7 +15,7 @@ class Scheduler:
 
     @classmethod
     def create_workcenter_list(cls):
-        # Retrieve Vehicle order
+        """Create list of available workcenters"""
         workcenter_req = requests.get(WORK_CENTER_REQUEST_URL)
         workcenter_req = (workcenter_req.json())
 
@@ -71,7 +71,7 @@ class Scheduler:
         return sorted(time_task_list, key=lambda k: k['process_time'], reverse=reverse_it)
 
     @classmethod
-    def create_task_duration_histogram(cls, parts, work_centers):
+    def create_task_duration_histogram(cls, parts):
         """
         Function that creates a histogram of task durations
 
@@ -97,21 +97,35 @@ class Scheduler:
                     task_count += 1
 
             if current_max not in task_distribution_histogram:
-                task_distribution_histogram[current_max] = [task_count, similar_tasks]
+                task_distribution_histogram[current_max] = similar_tasks
 
             parts.pop(0)
-
-        # Sort histogram by keys, in this case keys are the same as the duration
-        task_distribution_histogram = OrderedDict(sorted(task_distribution_histogram.items(),
-                                                         reverse=True))
-
-        # # Pretty print task_distribution_histogram
-        # pprint.pprint(task_distribution_histogram)
 
         return task_distribution_histogram
 
     @classmethod
-    def scheduler(cls, task_histogram):
+    def create_workcenter_histogram(cls, work_centers):
+        """
+        Create histogram of work-centers based on facility type and frequency
+        :param work_centers: list of available work centers
+        :return: histogram of work-centers
+        """
+        wc_histogram = {}
+        x = Counter(wc['production_type'] for wc in work_centers)
+        x_keys = dict(x).keys()
+
+        for key in x_keys:
+            similar_work_centers = []
+            for element in work_centers:
+                if element.get('production_type') == key:
+                    similar_work_centers.append(element)
+
+            wc_histogram[key] = similar_work_centers
+
+        return wc_histogram
+
+    @classmethod
+    def scheduler(cls, task_histogram, work_centers):
         """
         Calculates a schedule for a given set of tasks and durations
         :param task_histogram: histogram of tasks based on duration
@@ -122,22 +136,75 @@ class Scheduler:
             "solved": boolean flag indicates if a solution was reached.
         }
         """
-
         ###########################################################################
         #
         # Dictionary for storing the solution,
+        # of the form
+        # { time step: [list of completed activities] }
         #
-        # duration -- total steps or periods of time to complete tasks
-        # production_steps -- list of tuples,
+        # Each completed activity represents a part or vehicle component paired with a compatible
+        # facility, with a start time and finish time.
+        # ( Vehicle component, work center, start, finish)
         #
-        schedule_map = {
-            "duration": 0,
-            "production_steps": [],
-            "solved": False
-        }
+        #
+        schedule_map = {}
 
+        task_duration_keys = list(task_histogram.keys())
 
+        total_time_steps = 0
+        current_time_step = 0
+        delta_time_step = 0
+        current_activities = []
 
+        while task_duration_keys:
+            # While there are tasks to schedule
+
+            ###################################################################
+            # Get longest and next longest duration tasks
+            #
+            current_duration = task_duration_keys[0]
+            next_duration = task_duration_keys[1] if len(task_duration_keys) > 1 else 0
+
+            delta_time_step = current_duration - next_duration
+            current_tasks = task_histogram.get(current_duration)
+
+            ###################################################################
+            # Clear out any activities that are finished, free up the work center
+            # and add to the solution
+            completed_activities = [x for x in current_activities if x[2].get('finish') <= current_time_step]
+            schedule_map[current_time_step] = completed_activities
+
+            ###################################################################
+            # Reset facilities in completed activities to is_avaiable = True
+            #
+            for activity in completed_activities:
+                activity[1]['is_available'] = True
+
+            ###################################################################
+            # match current tasks with available work centers
+            # set 'taken' work centers to not available
+            for task in current_tasks:
+                required_type = task.get('facility_required')
+
+                work_centers_of_type = work_centers.get(required_type)
+
+                for work_center in work_centers_of_type:
+                    if work_center.get('is_available') and not task.get('is_assigned'):
+                        work_center['is_available'] = False
+                        task['is_assigned'] = True
+                        activity = (task, work_center,
+                                    {'start': current_time_step,
+                                     'finish': current_time_step + current_duration})
+
+                        # Add new activity to the list of current activities
+                        current_activities.append(activity)
+
+            if len(task_duration_keys) <= 1:
+                completed_activities = [x for x in current_activities]
+                schedule_map[current_time_step] = completed_activities
+
+            task_duration_keys.pop(0)
+            current_time_step += (current_duration - next_duration)
 
         return schedule_map
 
@@ -148,8 +215,12 @@ tasks = Scheduler.create_sorted_tasks(True)
 # Create list of workcenters
 centers = Scheduler.create_workcenter_list()
 
-# Invoke scheduler, (currently only creates histogram of tasks arranged by duration)
-task_histogram = Scheduler.create_task_duration_histogram(tasks, centers)
+# Get task histogram
+task_histogram = Scheduler.create_task_duration_histogram(tasks)
 
-pprint.pprint(task_histogram)
+# Get work center histogram
+work_center_histogram = Scheduler.create_workcenter_histogram(centers)
 
+schedule = Scheduler.scheduler(task_histogram, work_center_histogram)
+
+pprint(schedule)

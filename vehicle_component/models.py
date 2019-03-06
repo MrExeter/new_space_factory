@@ -13,5 +13,8 @@ class VehicleComponent(models.Model):
     # This is the required work-center type
     facility_required = models.CharField(choices=PRODUCTION_TYPE, max_length=16, default='A')
 
+    # Is Vehicle component in production
+    is_assigned = models.BooleanField(default=False)
+
     def __str__(self):
         return self.name
