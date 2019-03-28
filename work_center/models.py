@@ -7,7 +7,9 @@ PRODUCTION_TYPE = (
     ('D', 'Painting'),
 )
 
+
 class WorkCenter(models.Model):
+    """Represents a work center that processes components"""
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=256)
     is_available = models.BooleanField(default=True)

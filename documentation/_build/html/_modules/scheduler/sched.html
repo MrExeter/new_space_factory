@@ -1,0 +1,413 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>scheduler.sched &mdash; Space Factory 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Space Factory
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">The Space Factory API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#module-scheduler">Scheduler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#module-bom">The Bom</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#module-vehicle_component">Vehicle Component</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#module-work_center">Work Center</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Space Factory</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>scheduler.sched</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for scheduler.sched</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="c1">#</span>
+<span class="c1"># API_URL = &quot;http://127.0.0.1:8000/&quot;</span>
+<span class="c1"># VECHICLE_ORDERS = &quot;vehicle_orders/vehicle_orders/&quot;</span>
+<span class="c1"># VECHICLE_REQUEST_URL = &#39;&#39;.join([API_URL, VECHICLE_ORDERS])</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># WORK_CENTERS = &quot;work-centers/workcenters/&quot;</span>
+<span class="c1"># WORK_CENTER_REQUEST_URL = &#39;&#39;.join([API_URL, WORK_CENTERS])</span>
+
+
+<div class="viewcode-block" id="Scheduler"><a class="viewcode-back" href="../../api.html#scheduler.sched.Scheduler">[docs]</a><span class="k">class</span> <span class="nc">Scheduler</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Scheduler class&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Scheduler.create_workcenter_list"><a class="viewcode-back" href="../../api.html#scheduler.sched.Scheduler.create_workcenter_list">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_workcenter_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create list of available workcenters&quot;&quot;&quot;</span>
+        <span class="n">workcenter_req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">WORK_CENTER_REQUEST_URL</span><span class="p">)</span>
+        <span class="n">workcenter_req</span> <span class="o">=</span> <span class="p">(</span><span class="n">workcenter_req</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+        <span class="n">work_center_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">workcenter_req</span><span class="p">:</span>
+            <span class="n">work_center_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">work_center_list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">[</span><span class="s1">&#39;production_type&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Scheduler.create_task_pairs"><a class="viewcode-back" href="../../api.html#scheduler.sched.Scheduler.create_task_pairs">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_task_pairs</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Function to create a list of pairs of tasks from a sorted list of \</span>
+<span class="sd">        tasks.  The longest task is paired with the shortest, the next longest \</span>
+<span class="sd">        with the next shortest and so on</span>
+<span class="sd">        :return: A list of tuples of task pairs&quot;&quot;&quot;</span>
+        <span class="n">time_task_list</span> <span class="o">=</span> <span class="n">Scheduler</span><span class="o">.</span><span class="n">create_sorted_tasks</span><span class="p">()</span>
+        <span class="n">task_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_task_list</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">task_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">time_task_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">time_task_list</span><span class="p">[</span><span class="o">~</span><span class="n">i</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">task_pairs</span></div>
+
+<div class="viewcode-block" id="Scheduler.create_sorted_tasks"><a class="viewcode-back" href="../../api.html#scheduler.sched.Scheduler.create_sorted_tasks">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_sorted_tasks</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that creates a list of vehicle-components (tasks) and sorts \</span>
+<span class="sd">        them by processing time</span>
+<span class="sd">        :param descending: boolean flag for sort order, default is ascending, \</span>
+<span class="sd">        set to True for descending</span>
+<span class="sd">        :return: Sorted list of vehicle-components based on processing time. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">descending</span><span class="p">:</span>
+            <span class="n">reverse_it</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reverse_it</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Retrieve Vehicle order</span>
+        <span class="n">vehicle_order_req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VECHICLE_REQUEST_URL</span><span class="p">)</span>
+        <span class="n">vehicle_order_req</span> <span class="o">=</span> <span class="p">(</span><span class="n">vehicle_order_req</span><span class="o">.</span><span class="n">json</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Retrieve the BOM (bill of materials) from the vehicle order</span>
+        <span class="n">the_bom_req</span> <span class="o">=</span> <span class="n">vehicle_order_req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bill_of_materials&quot;</span><span class="p">)</span>
+        <span class="n">the_bom_req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">the_bom_req</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="c1"># Retrieve the list of vehicle components from the BOM</span>
+        <span class="n">vehicle_component_list</span> <span class="o">=</span> <span class="n">the_bom_req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vehicle_parts&#39;</span><span class="p">)</span>
+
+        <span class="n">time_task_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">vehicle_component_list</span><span class="p">:</span>
+            <span class="n">time_task_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">time_task_list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">[</span><span class="s1">&#39;process_time&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse_it</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scheduler.create_task_duration_histogram"><a class="viewcode-back" href="../../api.html#scheduler.sched.Scheduler.create_task_duration_histogram">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_task_duration_histogram</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Function that creates a histogram of task durations</span>
+<span class="sd">            :param parts: List of vehicle components to be processed</span>
+<span class="sd">            :param work_centers: List of work centers for parts processing</span>
+<span class="sd">            :return: A sorted dictionary (descending order by key value) and \</span>
+<span class="sd">            the mapped value contains a list of tasks with that duration&quot;&quot;&quot;</span>
+
+        <span class="n">task_distribution_histogram</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
+            <span class="c1"># Find the maximum duration task for remaining tasks</span>
+            <span class="n">current_max_task</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">parts</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;process_time&#39;</span><span class="p">])</span>
+            <span class="n">current_max</span> <span class="o">=</span> <span class="n">current_max_task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;process_time&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Count occurrences of tasks with this duration</span>
+            <span class="n">task_count</span> <span class="o">=</span> <span class="mi">0</span>      <span class="c1"># sum of tasks with identical duration</span>
+            <span class="n">similar_tasks</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># temporary list to store tasks of identical duration</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;process_time&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">current_max</span><span class="p">:</span>
+                    <span class="n">similar_tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+                    <span class="n">task_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">current_max</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">task_distribution_histogram</span><span class="p">:</span>
+                <span class="n">task_distribution_histogram</span><span class="p">[</span><span class="n">current_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">similar_tasks</span>
+
+            <span class="n">parts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">task_distribution_histogram</span></div>
+
+<div class="viewcode-block" id="Scheduler.create_workcenter_histogram"><a class="viewcode-back" href="../../api.html#scheduler.sched.Scheduler.create_workcenter_histogram">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_workcenter_histogram</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">work_centers</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create histogram of work-centers based on facility type and frequency</span>
+<span class="sd">        :param work_centers: list of available work centers</span>
+<span class="sd">        :return: histogram of work-centers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wc_histogram</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="s1">&#39;production_type&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">wc</span> <span class="ow">in</span> <span class="n">work_centers</span><span class="p">)</span>
+        <span class="n">x_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">x_keys</span><span class="p">:</span>
+            <span class="n">similar_work_centers</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">work_centers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;production_type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                    <span class="n">similar_work_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+            <span class="n">wc_histogram</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">similar_work_centers</span>
+
+        <span class="k">return</span> <span class="n">wc_histogram</span></div>
+
+<div class="viewcode-block" id="Scheduler.scheduler"><a class="viewcode-back" href="../../api.html#scheduler.sched.Scheduler.scheduler">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">scheduler</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">task_histogram</span><span class="p">,</span> <span class="n">work_centers</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates a schedule for a given set of tasks and durations</span>
+<span class="sd">        :param task_histogram: histogram of tasks based on duration</span>
+<span class="sd">        :return: dictionary with following stucture</span>
+<span class="sd">        {</span>
+<span class="sd">            duration: total duration time,</span>
+<span class="sd">            &quot;production_steps&quot;: detail of units produced at each time step,</span>
+<span class="sd">            &quot;solved&quot;: boolean flag indicates if a solution was reached.</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">###########################################################################</span>
+        <span class="c1">#</span>
+        <span class="c1"># Dictionary for storing the solution,</span>
+        <span class="c1"># of the form</span>
+        <span class="c1"># { time step: [list of completed activities] }</span>
+        <span class="c1">#</span>
+        <span class="c1"># Each completed activity represents a part or vehicle component paired with a compatible</span>
+        <span class="c1"># facility, with a start time and finish time.</span>
+        <span class="c1"># ( Vehicle component, work center, start, finish)</span>
+        <span class="c1">#</span>
+        <span class="c1">#</span>
+        <span class="n">schedule_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">task_duration_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">task_histogram</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">total_time_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">current_time_step</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">delta_time_step</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">current_activities</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">while</span> <span class="n">task_duration_keys</span><span class="p">:</span>
+            <span class="c1"># While there are tasks to schedule</span>
+
+            <span class="c1">###################################################################</span>
+            <span class="c1"># Get longest and next longest duration tasks</span>
+            <span class="c1">#</span>
+            <span class="n">current_duration</span> <span class="o">=</span> <span class="n">task_duration_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">next_duration</span> <span class="o">=</span> <span class="n">task_duration_keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">task_duration_keys</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+
+            <span class="n">delta_time_step</span> <span class="o">=</span> <span class="n">current_duration</span> <span class="o">-</span> <span class="n">next_duration</span>
+            <span class="n">current_tasks</span> <span class="o">=</span> <span class="n">task_histogram</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">current_duration</span><span class="p">)</span>
+
+            <span class="c1">###################################################################</span>
+            <span class="c1"># Clear out any activities that are finished, free up the work center</span>
+            <span class="c1"># and add to the solution</span>
+            <span class="n">completed_activities</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">current_activities</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;finish&#39;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">current_time_step</span><span class="p">]</span>
+            <span class="n">schedule_map</span><span class="p">[</span><span class="n">current_time_step</span><span class="p">]</span> <span class="o">=</span> <span class="n">completed_activities</span>
+
+            <span class="c1">###################################################################</span>
+            <span class="c1"># Reset facilities in completed activities to is_avaiable = True</span>
+            <span class="c1">#</span>
+            <span class="k">for</span> <span class="n">activity</span> <span class="ow">in</span> <span class="n">completed_activities</span><span class="p">:</span>
+                <span class="n">activity</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;is_available&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1">###################################################################</span>
+            <span class="c1"># match current tasks with available work centers</span>
+            <span class="c1"># set &#39;taken&#39; work centers to not available</span>
+            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">current_tasks</span><span class="p">:</span>
+                <span class="n">required_type</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;facility_required&#39;</span><span class="p">)</span>
+
+                <span class="n">work_centers_of_type</span> <span class="o">=</span> <span class="n">work_centers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">required_type</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">work_center</span> <span class="ow">in</span> <span class="n">work_centers_of_type</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">work_center</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;is_available&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;is_assigned&#39;</span><span class="p">):</span>
+                        <span class="n">work_center</span><span class="p">[</span><span class="s1">&#39;is_available&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">task</span><span class="p">[</span><span class="s1">&#39;is_assigned&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">activity</span> <span class="o">=</span> <span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">work_center</span><span class="p">,</span>
+                                    <span class="p">{</span><span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="n">current_time_step</span><span class="p">,</span>
+                                     <span class="s1">&#39;finish&#39;</span><span class="p">:</span> <span class="n">current_time_step</span> <span class="o">+</span> <span class="n">current_duration</span><span class="p">})</span>
+
+                        <span class="c1"># Add new activity to the list of current activities</span>
+                        <span class="n">current_activities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activity</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">task_duration_keys</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">completed_activities</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">current_activities</span><span class="p">]</span>
+                <span class="n">schedule_map</span><span class="p">[</span><span class="n">current_time_step</span><span class="p">]</span> <span class="o">=</span> <span class="n">completed_activities</span>
+
+            <span class="n">task_duration_keys</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">current_time_step</span> <span class="o">+=</span> <span class="p">(</span><span class="n">current_duration</span> <span class="o">-</span> <span class="n">next_duration</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">schedule_map</span></div></div>
+
+<span class="c1">#</span>
+<span class="c1"># # Create sorted list of tasks,</span>
+<span class="c1"># tasks = Scheduler.create_sorted_tasks(True)</span>
+<span class="c1">#</span>
+<span class="c1"># # Create list of workcenters</span>
+<span class="c1"># centers = Scheduler.create_workcenter_list()</span>
+<span class="c1">#</span>
+<span class="c1"># # Get task histogram</span>
+<span class="c1"># task_histogram = Scheduler.create_task_duration_histogram(tasks)</span>
+<span class="c1">#</span>
+<span class="c1"># # Get work center histogram</span>
+<span class="c1"># work_center_histogram = Scheduler.create_workcenter_histogram(centers)</span>
+<span class="c1">#</span>
+<span class="c1"># schedule = Scheduler.scheduler(task_histogram, work_center_histogram)</span>
+<span class="c1">#</span>
+<span class="c1"># pprint(schedule)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, John Sentz
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

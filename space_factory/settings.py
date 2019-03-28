@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'bom',
     'vehicle_order',
     'schedule',
+    'sphinx',
 ]
 
 MIDDLEWARE = [

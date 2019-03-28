@@ -3,6 +3,7 @@ from work_center.models import WorkCenter, PRODUCTION_TYPE
 
 
 class VehicleComponent(models.Model):
+    """Represents a part or component used in production"""
     name = models.CharField(max_length=36)
     part_number = models.CharField(max_length=64, unique=True)
     quantity = models.IntegerField(default=1)

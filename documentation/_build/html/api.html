@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>The Space Factory API Reference &mdash; Space Factory 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to Space Factory’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Space Factory
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Space Factory API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-scheduler">Scheduler</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-scheduler.sched">Scheduler Internals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-bom">The Bom</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-bom.models">Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-vehicle_component">Vehicle Component</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-work_center">Work Center</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Models</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Space Factory</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>The Space Factory API Reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="the-space-factory-api-reference">
+<h1>The Space Factory API Reference<a class="headerlink" href="#the-space-factory-api-reference" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="module-scheduler">
+<span id="scheduler"></span><h1>Scheduler<a class="headerlink" href="#module-scheduler" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-scheduler.sched">
+<span id="scheduler-internals"></span><h2>Scheduler Internals<a class="headerlink" href="#module-scheduler.sched" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="scheduler.sched.Scheduler">
+<em class="property">class </em><code class="descclassname">scheduler.sched.</code><code class="descname">Scheduler</code><a class="reference internal" href="_modules/scheduler/sched.html#Scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scheduler.sched.Scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scheduler class</p>
+<dl class="classmethod">
+<dt id="scheduler.sched.Scheduler.create_sorted_tasks">
+<em class="property">classmethod </em><code class="descname">create_sorted_tasks</code><span class="sig-paren">(</span><em>descending=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scheduler/sched.html#Scheduler.create_sorted_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scheduler.sched.Scheduler.create_sorted_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that creates a list of vehicle-components (tasks) and sorts         them by processing time
+:param descending: boolean flag for sort order, default is ascending,         set to True for descending
+:return: Sorted list of vehicle-components based on processing time.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="scheduler.sched.Scheduler.create_task_duration_histogram">
+<em class="property">classmethod </em><code class="descname">create_task_duration_histogram</code><span class="sig-paren">(</span><em>parts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scheduler/sched.html#Scheduler.create_task_duration_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scheduler.sched.Scheduler.create_task_duration_histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that creates a histogram of task durations
+:param parts: List of vehicle components to be processed
+:param work_centers: List of work centers for parts processing
+:return: A sorted dictionary (descending order by key value) and             the mapped value contains a list of tasks with that duration</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="scheduler.sched.Scheduler.create_task_pairs">
+<em class="property">classmethod </em><code class="descname">create_task_pairs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scheduler/sched.html#Scheduler.create_task_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scheduler.sched.Scheduler.create_task_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create a list of pairs of tasks from a sorted list of         tasks.  The longest task is paired with the shortest, the next longest         with the next shortest and so on
+:return: A list of tuples of task pairs</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="scheduler.sched.Scheduler.create_workcenter_histogram">
+<em class="property">classmethod </em><code class="descname">create_workcenter_histogram</code><span class="sig-paren">(</span><em>work_centers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scheduler/sched.html#Scheduler.create_workcenter_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scheduler.sched.Scheduler.create_workcenter_histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create histogram of work-centers based on facility type and frequency
+:param work_centers: list of available work centers
+:return: histogram of work-centers</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="scheduler.sched.Scheduler.create_workcenter_list">
+<em class="property">classmethod </em><code class="descname">create_workcenter_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scheduler/sched.html#Scheduler.create_workcenter_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scheduler.sched.Scheduler.create_workcenter_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create list of available workcenters</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="scheduler.sched.Scheduler.scheduler">
+<em class="property">classmethod </em><code class="descname">scheduler</code><span class="sig-paren">(</span><em>task_histogram</em>, <em>work_centers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scheduler/sched.html#Scheduler.scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scheduler.sched.Scheduler.scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates a schedule for a given set of tasks and durations
+:param task_histogram: histogram of tasks based on duration
+:return: dictionary with following stucture
+{</p>
+<blockquote>
+<div>duration: total duration time,
+“production_steps”: detail of units produced at each time step,
+“solved”: boolean flag indicates if a solution was reached.</div></blockquote>
+<p>}</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-bom">
+<span id="the-bom"></span><h1>The Bom<a class="headerlink" href="#module-bom" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-bom.models">
+<span id="models"></span><h2>Models<a class="headerlink" href="#module-bom.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="bom.models.Bom">
+<em class="property">class </em><code class="descclassname">bom.models.</code><code class="descname">Bom</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bom/models.html#Bom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#bom.models.Bom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bill of materials class, represents a list of parts or components</p>
+<dl class="exception">
+<dt id="bom.models.Bom.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#bom.models.Bom.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="bom.models.Bom.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#bom.models.Bom.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-vehicle_component">
+<span id="vehicle-component"></span><h1>Vehicle Component<a class="headerlink" href="#module-vehicle_component" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>Models<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-vehicle_component.models"></span><dl class="class">
+<dt id="vehicle_component.models.VehicleComponent">
+<em class="property">class </em><code class="descclassname">vehicle_component.models.</code><code class="descname">VehicleComponent</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vehicle_component/models.html#VehicleComponent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vehicle_component.models.VehicleComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a part or component used in production</p>
+<dl class="exception">
+<dt id="vehicle_component.models.VehicleComponent.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#vehicle_component.models.VehicleComponent.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="vehicle_component.models.VehicleComponent.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#vehicle_component.models.VehicleComponent.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-work_center">
+<span id="work-center"></span><h1>Work Center<a class="headerlink" href="#module-work_center" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id2">
+<h2>Models<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-work_center.models"></span><dl class="class">
+<dt id="work_center.models.WorkCenter">
+<em class="property">class </em><code class="descclassname">work_center.models.</code><code class="descname">WorkCenter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/work_center/models.html#WorkCenter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#work_center.models.WorkCenter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a work center that processes components</p>
+<dl class="exception">
+<dt id="work_center.models.WorkCenter.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#work_center.models.WorkCenter.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="work_center.models.WorkCenter.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#work_center.models.WorkCenter.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Space Factory’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, John Sentz
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

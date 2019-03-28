@@ -12,7 +12,7 @@ WORK_CENTER_REQUEST_URL = ''.join([API_URL, WORK_CENTERS])
 
 
 class Scheduler:
-
+    """Scheduler class"""
     @classmethod
     def create_workcenter_list(cls):
         """Create list of available workcenters"""
@@ -27,11 +27,10 @@ class Scheduler:
 
     @classmethod
     def create_task_pairs(cls):
-        """
-        Function to create a list of pairs of tasks from a sorted list of tasks.  The longest
-        task is paired with the shortest, the next longest with the next shortest and so on
-        :return: A list of tuples of task pairs
-        """
+        """Function to create a list of pairs of tasks from a sorted list of \
+        tasks.  The longest task is paired with the shortest, the next longest \
+        with the next shortest and so on
+        :return: A list of tuples of task pairs"""
         time_task_list = Scheduler.create_sorted_tasks()
         task_pairs = []
         for i in range(len(time_task_list) // 2):
@@ -42,12 +41,11 @@ class Scheduler:
     @classmethod
     def create_sorted_tasks(cls, descending=None):
         """
-        Function that creates a list of vehicle-components (tasks) and sorts them
-        by processing time
-        :param descending: boolean flag for sort order, default is ascending, set
-        to True for descending
-        :return: Sorted list of vehicle-components based on processing time.
-        """
+        Function that creates a list of vehicle-components (tasks) and sorts \
+        them by processing time
+        :param descending: boolean flag for sort order, default is ascending, \
+        set to True for descending
+        :return: Sorted list of vehicle-components based on processing time. """
         if descending:
             reverse_it = True
         else:
@@ -72,14 +70,11 @@ class Scheduler:
 
     @classmethod
     def create_task_duration_histogram(cls, parts):
-        """
-        Function that creates a histogram of task durations
-
-        :param parts: List of vehicle components to be processed
-        :param work_centers: List of work centers for parts processing
-        :return: A sorted dictionary (descending order by key value) and the mapped
-        value contains a list of tasks with that duration
-        """
+        """ Function that creates a histogram of task durations
+            :param parts: List of vehicle components to be processed
+            :param work_centers: List of work centers for parts processing
+            :return: A sorted dictionary (descending order by key value) and \
+            the mapped value contains a list of tasks with that duration"""
 
         task_distribution_histogram = {}
 
