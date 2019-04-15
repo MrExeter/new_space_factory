@@ -32,6 +32,8 @@ The output shows the sequence of components being processed.  It is in the form 
 
 
 ### Additional browser based documentation is available in /documents/_build/html/
-###_open index.html in your browser_
+
+
+_open index.html in your browser_
 
 
